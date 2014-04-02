@@ -28,6 +28,7 @@ Int_constant {digit}+
 Float_constant
 String_constant
 comment
+test
 */
 Float_constant 
 String_constant	
