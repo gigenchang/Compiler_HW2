@@ -29,15 +29,39 @@ Float_constant
 String_constant
 comment
 */
+Float_constant 
+String_constant	
+comment	/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/))
 
-OP_assign        "="
-OP_or   "||"
+/* Arithemetic operators */
+OP_plus			"+"
+OP_minus		"-"
+OP_mul			"*"
+OP_div			"/"
+
+/* Assignment operator */
+OP_assign       "="
+
+/* Logical operators */
+OP_or			"||"
+OP_and			"&&"
+OP_not			"!"
+
+/* Relational operators */
+OP_larger		">"
+OP_less			"<"
+OP_largerE		">="
+OP_lessE		"<="
+OP_notE			"!="
+OP_equal		"=="
 
 /* Other operators appear here */ 
 
 
 newline  "\n"
 
+DL_lbracket "["
+DL_rbracket "]"
 DL_lparen "("
 DL_rparen ")"
 DL_lbrace "{"
@@ -53,8 +77,8 @@ error    .
 %%
 
 {WS}            {}
-{RWInt}         {/* return INT; */ }
-{RWFloat}       {/* return FLOAT; */}
+{RWInt}			{}
+{RWFloat}		{}
 {ID}            { 
 			ptr = lookup(yytext);
 			if (ptr == NULL)
