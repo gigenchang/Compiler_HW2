@@ -30,10 +30,9 @@ String_constant
 comment
 test
 */
-/*	
-	Float_constant  ({digit}+)(e(+|-)?{digit}+)|({digit}+(\.{digit}+)(e(+|-)?{digit}+)?)|({digit}+)?(\.{digit}+)(e(+|-)?{digit}+)? 
-	String_constant	\"(\\.|[^"])*\" 
-*/
+	
+Float_constant  ({digit}+)(e(\+|-)?{digit}+)|({digit}+(\.{digit}+)(e(\+|-)?{digit}+)?)|({digit}+)?(\.{digit}+)(e(\+|-)?{digit}+)? 
+String_constant	\"(\\.|[^"])*\" 
 comment	"/*"([^*]|\*+[^*/])*\*+"/"
 
 /* Arithemetic operators */
@@ -81,10 +80,9 @@ error    .
 
 {letter}  
 {digit}    
-	/*
-	{String_constant}
-	{Float_constant}	{}
-	*/
+{String_constant}
+
+{Float_constant}	{}
 {comment}	printf("%s\n", yytext);
 {WS}           		{}
 {Int_constant}		{}
