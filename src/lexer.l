@@ -30,9 +30,11 @@ String_constant
 comment
 test
 */
-Float_constant 
-String_constant	
-comment	/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/))
+/*	
+	Float_constant  ({digit}+)(e(+|-)?{digit}+)|({digit}+(\.{digit}+)(e(+|-)?{digit}+)?)|({digit}+)?(\.{digit}+)(e(+|-)?{digit}+)? 
+	String_constant	\"(\\.|[^"])*\" 
+*/
+comment	"/*"([^*]|\*+[^*/])*\*+"/"
 
 /* Arithemetic operators */
 OP_plus			"+"
@@ -77,25 +79,47 @@ error    .
 
 %%
 
-{WS}            {}
-{RWInt}			{}
-{RWFloat}		{}
-{ID}            { 
+{letter}  
+{digit}    
+	/*
+	{String_constant}
+	{Float_constant}	{}
+	*/
+{comment}	printf("%s\n", yytext);
+{WS}           		{}
+{Int_constant}		{}
+{ID}            	{ 
 			ptr = lookup(yytext);
 			if (ptr == NULL)
 			     insertID(yytext);	
 			else 
 			     ptr->counter++;
 		}
+{OP_plus}			
+{OP_minus}		
+{OP_mul}			
+{OP_div}			
+{OP_assign}       
+{OP_or}			
+{OP_and}			
 
-{OP_assign}     /* return OP_ASSIGN; */ 
-{OP_or}         /* return OP_OR; */
-{DL_lparen}     /* return MK_LPAREN; */
-{DL_rparen}     /* return MK_RPAREN; */
-{DL_lbrace}     /* return MK_LBRACE; */
-{DL_rbrace}     /* return MK_RBRACE; */
-{DL_comma}      {}
-{DL_semicol}    {}
+{OP_larger}		
+{OP_less}			
+{OP_largerE}		
+{OP_lessE}		
+{OP_notE}			
+{OP_equal}		
+
+{DL_lbracket}
+{DL_rbracket}
+{DL_lparen}
+{DL_rparen}
+{DL_lbrace}
+{DL_rbrace}
+{DL_comma}
+{DL_semicol}
+{DL_dot}
+
 {newline}       linenumber += 1;
 {error}         printf("ERR \n");/* return ERROR; */
 
@@ -110,6 +134,7 @@ main(int argc, char **argv)
    else
       yyin = stdin;
    yylex();
+
    printSymTab();
 }
 
