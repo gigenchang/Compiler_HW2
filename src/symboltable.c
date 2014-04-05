@@ -10,6 +10,8 @@
 symtab * hash_table[TABLE_SIZE];
 extern int linenumber;
 
+int symbol_size = 0;
+
 int HASH(char * str){
 	int idx=0;
 	while(*str){
@@ -63,27 +65,57 @@ void insertID(char *name){
 	strcpy(symptr->lexeme,name);
 	symptr->line=linenumber;
 	symptr->counter=1;
+	
+	//symbol_size用於判斷表中有多少個id
+	symbol_size += 1;
 }
 
 void printSym(symtab* ptr) 
 {
-	    printf(" Name = %s \n", ptr->lexeme);
-	    printf(" References = %d \n", ptr->counter);
+
+	printf("%-15s %d\n", ptr->lexeme, ptr->counter);
+}
+
+typedef struct {
+	symtab* front;
+	symtab* back;	
+} Node;
+
+int compr(const void* p1, const void* p2)
+{
+	char* str1 = (*(symtab**)p1)->lexeme;
+	char* str2 = (*(symtab**)p2)->lexeme;
+	return strcmp(str1,str2);
 }
 
 void printSymTab()
 {
     int i;
-    printf("----- Symbol Table ---------\n");
-    for (i=0; i<TABLE_SIZE; i++)
-    {
-        symtab* symptr;
-	symptr = hash_table[i];
-	while (symptr != NULL)
+
+	//準備一個存放指向的symtable各項id的陣列
+	symtab** sym_ptr_ary = (symtab**)malloc(symbol_size * sizeof(symtab*)); 
+	int ary_top = 0;
+	
+	for(i=0; i<TABLE_SIZE; i++)
 	{
-            printf("====>  index = %d \n", i);
-	    printSym(symptr);
-	    symptr=symptr->front;
+		symtab* symptr;
+		symptr = hash_table[i];
+		while(symptr != NULL)
+		{
+			//把指標存到陣列裡
+			sym_ptr_ary[ary_top] = symptr;
+			ary_top++;
+			//get next symbol
+			symptr = symptr->front;
+		}
 	}
-    }
+
+	//parameter list: 
+	//    base,        number,      size,            
+	qsort(sym_ptr_ary, symbol_size, sizeof(symtab*), compr);
+	printf("Frequency of identifiers:\n");
+	for(i=0; i<symbol_size; i++)
+	{
+		printSym(sym_ptr_ary[i]);
+	}
 }
